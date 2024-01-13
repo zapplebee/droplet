@@ -22,11 +22,15 @@ const LIVE_CONFIG = IS_PRODUCTON ? PRODUCTION_CONFIG : DEV_CONFIG;
 
 const HTML_CONTENT = await getAsHtml();
 
+const data = Buffer.from(HTML_CONTENT);
+const compressed = Bun.gzipSync(data);
+
 Bun.serve({
   hostname: "0.0.0.0",
   fetch(req) {
-    return new Response(HTML_CONTENT, {
+    return new Response(compressed, {
       headers: {
+        "Content-Encoding": "gzip",
         "Content-type": "text/html; charset=utf-8",
       },
     });
