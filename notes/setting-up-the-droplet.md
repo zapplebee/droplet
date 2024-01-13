@@ -287,7 +287,7 @@ by default, bun did not read the encoding of the file that was read from disk.
 
 i guess i assumed it would.
 
-my good friend Ryan Rampersad https://twitter.com/ryanmn pointed out that the unicode charaters where buggy.
+my good friend Ryan Rampersad https://twitter.com/ryanmr pointed out that the unicode charaters where buggy.
 
 i looked and saw that the server was responding with a `Content-type` header of `text/markdown`.
 
