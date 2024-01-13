@@ -295,4 +295,6 @@ Bun had identified this but did not automatically set the additional encoding in
 
 it was changes to `text/markdown; charset=utf-8`
 
+https://github.com/zapplebee/droplet/commit/bb3e0c4b7f4860ed59d7c6789d2ba8752b24614a
+
 now it works as expected.
