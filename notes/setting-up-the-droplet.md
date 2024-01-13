@@ -447,3 +447,23 @@ after setting this up i realized i dont have prettier installed in the droplet, 
 
 // TODO set up prettier and git hooks i guess
 
+---
+
+okay now that i have a dev mode i can start to actually add some features to this thing.
+
+first of all, i would prefer some minimal styling...
+
+and i do mean minimal.
+
+and to actually serve this as html
+
+so far i don't have any dependencies and it might be good to keep it that way for a while.
+
+bun gives me a lot out of the box and would like to keep dependencies to a minimum
+
+first, i'll read up all the markdown paths.
+
+```
+
+
+```
