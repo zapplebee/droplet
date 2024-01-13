@@ -1,3 +1,13 @@
+# 👋👋👋 hi. this is blog from zac skalko.
+
+ https://twitter.com/zapplebee
+
+I have started way too many blogs and got caught up on the making it and not the writing.
+
+this is just plain text for that reason.
+
+ ---
+
 i started setting up my droplet today.
 
 here's a log.
@@ -269,3 +279,20 @@ h e l l o   w o r l d%
 
 ```
 
+---
+
+the first bug was discovered.
+
+by default, bun did not read the encoding of the file that was read from disk.
+
+i guess i assumed it would.
+
+my good friend Ryan Rampersad https://twitter.com/ryanmn pointed out that the unicode charaters where buggy.
+
+i looked and saw that the server was responding with a `Content-type` header of `text/markdown`.
+
+Bun had identified this but did not automatically set the additional encoding information.
+
+it was changes to `text/markdown; charset=utf-8`
+
+now it works as expected.
