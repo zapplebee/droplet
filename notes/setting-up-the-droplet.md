@@ -298,3 +298,152 @@ it was changes to `text/markdown; charset=utf-8`
 https://github.com/zapplebee/droplet/commit/bb3e0c4b7f4860ed59d7c6789d2ba8752b24614a
 
 now it works as expected.
+
+---
+
+i need a way to run this locally that ignores the certs
+
+the way it will work is based on the NODE_ENV, i'll create the configuration differntly.
+
+though i don't love that i am going to bake this directly into the entrypoint file, the app is still very simple and it's okay. the goal is to make some thing that can be changed.
+
+in the .bashrc file i'll export the NODE_ENV.
+
+```
+export NODE_ENV=production
+```
+
+that way, anytime i am running something on this machine it will automatically be set.
+
+right now the service is just being run in the background.
+
+```
+bun index.ts &
+```
+
+While bun does support a watch mode, i dont really want to think about memory leaks yet so i am just going to make a handy alias to stop and restart it.
+
+to find the running process in the background, I'm running
+
+```
+ss -lptn 'sport = :80'
+State                 Recv-Q                Send-Q                               Local Address:Port                               Peer Address:Port               Process
+LISTEN                0                     512                                        0.0.0.0:80                                      0.0.0.0:*                   users:(("bun",pid=1562,fd=14))
+```
+
+while this is good, i'm going to need to trim that output so i can get just the process id and kill it
+
+i can use `awk` for this.
+
+```
+ss -lptn 'sport = :80' | awk 'NR > 1 {print $6}'
+users:(("bun",pid=1562,fd=14))
+
+```
+
+this skips the first line, the table headers, and then takes the sixth column value.
+
+still not quite just the process id.
+
+a couple cuts will do the trick
+
+```
+ss -lptn 'sport = :80' | awk 'NR > 1 {print $6}'  | cut -d= -f2 | cut -d, -f1
+1562
+```
+
+this gives me just the process id of the server that is listening on port 80. i could have used the https port 443 instead but this is fine since it has to serve both for the redirects.
+
+next i have to pass that var into a `kill` command.
+
+I can do that with a command subsitution.
+
+```
+kill $(ss -lptn 'sport = :80' | awk 'NR > 1 {print $6}'  | cut -d= -f2 | cut -d, -f1)
+```
+
+after that i just need to start the service again.
+
+
+```
+
+kill $(ss -lptn 'sport = :80' | awk 'NR > 1 {print $6}'  | cut -d= -f2 | cut -d, -f1) & bun /mnt/volume_sfo3_01/apps/helloworld/index.ts &
+
+```
+
+i'll add that as an alias in the `.bashrc` file
+
+```
+alias restartbun="kill $(ss -lptn 'sport = :80' | awk 'NR > 1 {print $6}'  | cut -d= -f2 | cut -d, -f1) & bun /mnt/volume_sfo3_01/apps/helloworld/index.ts &"
+```
+
+this gives me a couple advantages right now.
+
+1. there's no auto deploy. i have to pull from git or change the files on the server and restart. this will let me make a mess of things and not have an auto watcher restarting the server if it's not in a good state.
+2. it's based on what port is exposed, so if i change the actual edge listener to a proxy or something, i can restart it with pretty much the same command.
+
+---
+
+okay, now i can finally set up the application code to serve certs if we're in production mode.
+
+```
+
+const PRODUCTION_CONFIG = {
+  port: 443,
+  tls: {
+    cert: Bun.file(
+      "/etc/letsencrypt/live/zapplebee.prettybirdserver.com/cert.pem",
+    ),
+    key: Bun.file(
+      "/etc/letsencrypt/live/zapplebee.prettybirdserver.com/privkey.pem",
+    ),
+  },
+} as const;
+
+const DEV_CONFIG = {
+  port: 3100
+} as const;
+
+const IS_PRODUCTON = process.env.NODE_ENV === 'production';
+
+const LIVE_CONFIG = IS_PRODUCTON ? PRODUCTION_CONFIG : DEV_CONFIG;
+
+Bun.serve({
+
+  hostname: "0.0.0.0",
+  fetch(req) {
+    return new Response(Bun.file("/mnt/volume_sfo3_01/apps/notes/setting-up-the-droplet.md"), {
+      headers: {
+        'Content-type': 'text/markdown; charset=utf-8'
+      }
+    });
+  },
+  ...LIVE_CONFIG
+});
+
+
+if(IS_PRODUCTON) {
+  // no need to serve the redirects if we're not in prod
+  Bun.serve({
+    port: 80,
+    hostname: "0.0.0.0",
+    fetch(req) {
+      return Response.redirect(`${req.url.replace(/^http:/gi, "https:")}`, 302);
+    },
+  });
+  
+}
+
+
+```
+
+here's the changes
+
+https://github.com/zapplebee/droplet/commit/73933eee9417f10c9139d4875cc6f292696ff9ab
+
+---
+
+after setting this up i realized i dont have prettier installed in the droplet, and since i am doing a lot of authoring directly on it via ssh, i might want to do that in the future.
+
+// TODO set up prettier and git hooks i guess
+
