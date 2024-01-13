@@ -1,11 +1,13 @@
+import { getAsHtml } from "./files" with { type: "macro" };
+
 const PRODUCTION_CONFIG = {
   port: 443,
   tls: {
     cert: Bun.file(
-      "/etc/letsencrypt/live/zapplebee.prettybirdserver.com/cert.pem",
+      "/etc/letsencrypt/live/zapplebee.prettybirdserver.com/cert.pem"
     ),
     key: Bun.file(
-      "/etc/letsencrypt/live/zapplebee.prettybirdserver.com/privkey.pem",
+      "/etc/letsencrypt/live/zapplebee.prettybirdserver.com/privkey.pem"
     ),
   },
 } as const;
@@ -18,17 +20,16 @@ const IS_PRODUCTON = process.env.NODE_ENV === "production";
 
 const LIVE_CONFIG = IS_PRODUCTON ? PRODUCTION_CONFIG : DEV_CONFIG;
 
+const HTML_CONTENT = await getAsHtml();
+
 Bun.serve({
   hostname: "0.0.0.0",
   fetch(req) {
-    return new Response(
-      Bun.file("/mnt/volume_sfo3_01/apps/notes/setting-up-the-droplet.md"),
-      {
-        headers: {
-          "Content-type": "text/markdown; charset=utf-8",
-        },
+    return new Response(HTML_CONTENT, {
+      headers: {
+        "Content-type": "text/html; charset=utf-8",
       },
-    );
+    });
   },
   ...LIVE_CONFIG,
 });
