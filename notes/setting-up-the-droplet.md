@@ -1,12 +1,12 @@
 # 👋👋👋 hi. this is blog from zac skalko.
 
- https://twitter.com/zapplebee
+https://twitter.com/zapplebee
 
 I have started way too many blogs and got caught up on the making it and not the writing.
 
 this is just plain text for that reason.
 
- ---
+---
 
 i started setting up my droplet today.
 
@@ -28,8 +28,6 @@ i tried to remove the lock file and retry. no dice. i restarted the machine and 
 
 the first real tool i installed was vs code server. it made it super easy to just drive this machine like it's my local machine.
 
-
-
 after that, opened up http and https with ufw
 
 ```
@@ -47,7 +45,7 @@ curl -fsSL https://bun.sh/install | bash
 
 ```
 
-dang zip was missing. i installed with 
+dang zip was missing. i installed with
 
 ```
 apt-get install zip
@@ -58,7 +56,6 @@ i figured i should install build essential too
 ```
 apt-get install build-essential
 ```
-
 
 now i could install bun.
 
@@ -108,8 +105,6 @@ i went to the network tab and copied the request as curl.
 
 i decided that it might be something a browser call is enforcing, so i should try all the same everything (cookies headers etc) from another spot.
 
-
-
 ```
 ➜  ~ curl 'https://zapplebee.prettybirdserver.com/' \
   -H 'Upgrade-Insecure-Requests: 1' \
@@ -134,9 +129,7 @@ i could now set up certbot.
 snap install --classic certbot
 ```
 
-
 i dont really have a proxy or loadbalancer decided on yet, so i was going to just use certbot without autoconfiguration.
-
 
 https://www.digitalocean.com/community/tutorials/how-to-use-certbot-standalone-mode-to-retrieve-let-s-encrypt-ssl-certificates-on-ubuntu-20-04
 
@@ -180,8 +173,6 @@ Bun.serve({
   },
 });
 ```
-
-
 
 now i just need to handle directing traffic to https
 
@@ -364,7 +355,6 @@ kill $(ss -lptn 'sport = :80' | awk 'NR > 1 {print $6}'  | cut -d= -f2 | cut -d,
 
 after that i just need to start the service again.
 
-
 ```
 
 kill $(ss -lptn 'sport = :80' | awk 'NR > 1 {print $6}'  | cut -d= -f2 | cut -d, -f1) & bun /mnt/volume_sfo3_01/apps/helloworld/index.ts &
@@ -431,7 +421,7 @@ if(IS_PRODUCTON) {
       return Response.redirect(`${req.url.replace(/^http:/gi, "https:")}`, 302);
     },
   });
-  
+
 }
 
 
@@ -464,6 +454,47 @@ bun gives me a lot out of the box and would like to keep dependencies to a minim
 first, i'll read up all the markdown paths.
 
 ```
+export async function getFilePaths(): Promise<Array<string>> {
+  const glob = new Glob("*.md");
 
+  const filepaths: Array<string> = [];
+
+  for await (const file of glob.scan(NOTES_DIRECTORY)) {
+    filepaths.push(`${NOTES_DIRECTORY}${file}`);
+  }
+
+  return filepaths;
+}
 
 ```
+
+then i'll mash em together for now
+
+```
+export async function getAsHtml(): Promise<string> {
+  const filepaths = await getFilePaths();
+  const files = filepaths.map((e) => Bun.file(e));
+
+  const fileContents = await Promise.all(files.map((e) => e.text()));
+
+  const rawBody = fileContents.join("\n---\n");
+
+  return `<!DOCTYPE html>
+<html><body><style>* {background-color: black; color: green;}</style><pre>${Bun.escapeHTML(rawBody)}</pre></body></html>`;
+}
+
+```
+
+at last i'll import it in the index.
+
+since i want this to fail early, ie at start up, i'll use bun's macro capability to do it.
+
+```
+import { getAsHtml } from "./files" with { type: "macro" };
+```
+
+this runs the getting and escaping of the files at start up and inlines the result into the AST.
+
+https://bun.sh/docs/bundler/macros
+
+not super useful now since i am not bundling, but an appropriate use of a macro
