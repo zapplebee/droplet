@@ -498,3 +498,26 @@ this runs the getting and escaping of the files at start up and inlines the resu
 https://bun.sh/docs/bundler/macros
 
 not super useful now since i am not bundling, but an appropriate use of a macro
+
+i also added gzip it was very simple.
+
+```
+const HTML_CONTENT = await getAsHtml();
+
+const data = Buffer.from(HTML_CONTENT);
+const compressed = Bun.gzipSync(data);
+
+Bun.serve({
+  hostname: "0.0.0.0",
+  fetch(req) {
+    return new Response(compressed, {
+      headers: {
+        "Content-Encoding": "gzip",
+        "Content-type": "text/html; charset=utf-8",
+      },
+    });
+  },
+  ...LIVE_CONFIG,
+});
+
+```
