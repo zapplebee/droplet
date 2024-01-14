@@ -4,10 +4,10 @@ const PRODUCTION_CONFIG = {
   port: 443,
   tls: {
     cert: Bun.file(
-      "/etc/letsencrypt/live/zapplebee.prettybirdserver.com/cert.pem"
+      "/etc/letsencrypt/live/zapplebee.prettybirdserver.com/cert.pem",
     ),
     key: Bun.file(
-      "/etc/letsencrypt/live/zapplebee.prettybirdserver.com/privkey.pem"
+      "/etc/letsencrypt/live/zapplebee.prettybirdserver.com/privkey.pem",
     ),
   },
 } as const;
