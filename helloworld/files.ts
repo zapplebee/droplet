@@ -23,13 +23,27 @@ export async function getAsHtml(): Promise<string> {
   const bodyLines = escapedBody.split("\n");
   const maxCharactersInLineNumber = String(bodyLines.length).length;
 
+  let inCodeBlock = false;
+
   return `<!DOCTYPE html>
-<html><body><style>* {background-color: black; color: #4d9c25;} .line-link {color: #2f5c19;} .space, .line-link {  -webkit-user-select: none; -ms-user-select: none; user-select: none;}</style><pre>${bodyLines
+<html><head></head><body><style>@import "/public/main.css";</style><main>${bodyLines
     .map((line, index) => {
+      const linkedLine = line.replaceAll(
+        /(https:\/\/[^\s\)]+)/gi,
+        '<a href="$&">$&</a>'
+      );
       const lineNumber = String(index).padStart(maxCharactersInLineNumber, "0");
       const lineId = `line-${lineNumber}`;
 
-      return `<span class="line" id="${lineId}"><a class="line-link" href="#${lineId}">${lineNumber}</a><span class="space">&nbsp;&nbsp;&nbsp;&nbsp;</span><span>${line}</span></span>`;
+      const isBackticks = line.startsWith("```");
+
+      if (isBackticks) {
+        inCodeBlock = !inCodeBlock;
+      }
+
+      const inCode = Boolean(inCodeBlock || isBackticks);
+
+      return `<div class="line" id="${lineId}"><a class="line-link" href="#${lineId}">${lineNumber}</a><span class="${inCode ? "codeblock" : "prose"}">${inCode ? line : linkedLine}</span></div>`;
     })
-    .join("\n")}</pre></body></html>`;
+    .join("\n")}</main></body></html>`;
 }

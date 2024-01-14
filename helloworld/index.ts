@@ -4,10 +4,10 @@ const PRODUCTION_CONFIG = {
   port: 443,
   tls: {
     cert: Bun.file(
-      "/etc/letsencrypt/live/zapplebee.prettybirdserver.com/cert.pem",
+      "/etc/letsencrypt/live/zapplebee.prettybirdserver.com/cert.pem"
     ),
     key: Bun.file(
-      "/etc/letsencrypt/live/zapplebee.prettybirdserver.com/privkey.pem",
+      "/etc/letsencrypt/live/zapplebee.prettybirdserver.com/privkey.pem"
     ),
   },
 } as const;
@@ -23,15 +23,35 @@ const LIVE_CONFIG = IS_PRODUCTON ? PRODUCTION_CONFIG : DEV_CONFIG;
 const HTML_CONTENT = await getAsHtml();
 
 const data = Buffer.from(HTML_CONTENT);
-const compressed = Bun.gzipSync(data);
+const HTML_RESPONSE_BODY = Bun.gzipSync(data);
+
+const CSS_RESPONSE_BODY = Bun.gzipSync(
+  Buffer.from(await Bun.file("./public/main.css").arrayBuffer())
+);
 
 Bun.serve({
   hostname: "0.0.0.0",
-  fetch(req) {
-    return new Response(compressed, {
+  fetch: async function fetch(req) {
+    console.log(req.url);
+    const requestUrl = new URL(req.url);
+    console.log(requestUrl);
+
+    const cssRequestPath = new URL("/public/main.css", requestUrl.origin);
+
+    if (requestUrl.pathname === "/public/main.css") {
+      return new Response(CSS_RESPONSE_BODY, {
+        headers: {
+          "Content-Encoding": "gzip",
+          "Content-type": "text/css; charset=utf-8",
+        },
+      });
+    }
+
+    return new Response(HTML_RESPONSE_BODY, {
       headers: {
         "Content-Encoding": "gzip",
         "Content-type": "text/html; charset=utf-8",
+        Link: `</public/main.css>; rel="prefetch"; as="style";`,
       },
     });
   },
@@ -48,3 +68,5 @@ if (IS_PRODUCTON) {
     },
   });
 }
+
+console.log("started: " + performance.now());

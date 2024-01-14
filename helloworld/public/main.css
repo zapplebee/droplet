@@ -1,0 +1,38 @@
+* {
+  background-color: black;
+  color: #4d9c25;
+}
+.line {
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+}
+.line-link {
+  color: #2f5c19;
+}
+.space,
+.line-link {
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+main {
+  font-family: monospace;
+}
+
+.codeblock {
+  color: rgb(215, 246, 152);
+  white-space: pre;
+}
+
+.prose {
+  max-width: 40ch;
+  white-space: pre-wrap;
+}
+@media (min-width: 50ch) {
+  .prose {
+    max-width: 80ch;
+    white-space: pre;
+  }
+}
