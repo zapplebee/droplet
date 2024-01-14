@@ -584,3 +584,98 @@ export async function getAsHtml(): Promise<string> {
 
 
 ```
+
+the next thing i want to do is enable a line wrap mode for mobile.
+
+but i dont want the markdown style codeblocks wrap.
+
+so i first need to make the codeblocks wrapped in a new node.
+
+i'll have to do some refactoring of the page builder.
+
+as soon as I change styles in there to a static CSS file, i was already starting to get irritated by the lack of structure in code.
+
+there's literally one handler. it should be easy to change, and it is, the hard part is thinking about what I want to change it to.
+
+i was really trying defer design decisions because, well, i dont want to think about it too hard.
+
+this is supposed to be a fun little project.
+
+i guess to keep this as simple as possible, i should just write vanilla css and i really need to vanilla js and just author and host them from a public folder
+
+It's time that I actually messed with these Link headers.
+
+This should allow the network requests to start as soon as the document loads.
+
+https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Link
+
+That will keep the doc in cache until it used by the page.
+
+I need to modify the response that the html request returns
+
+```
+return new Response(HTML_RESPONSE_BODY, {
+  headers: {
+    "Content-Encoding": "gzip",
+    "Content-type": "text/html; charset=utf-8",
+    Link: `</public/main.css>; rel="prefetch"; as="style";`,
+  },
+});
+```
+
+Then, in the actual CSS in the HTML, I can import it for free.
+
+and it's already been loaded
+
+---
+
+added a little magic to the html renderer. not my best code ever. but it does the job until i find a real framework i want to use for this.
+
+````
+
+export async function getAsHtml(): Promise<string> {
+  const filepaths = await getFilePaths();
+  const files = filepaths.map((e) => Bun.file(e));
+  const fileContents = await Promise.all(files.map((e) => e.text()));
+  const rawBody = fileContents.join("\n---\n").replaceAll("\r", "");
+  const escapedBody = Bun.escapeHTML(rawBody);
+  const bodyLines = escapedBody.split("\n");
+  const maxCharactersInLineNumber = String(bodyLines.length).length;
+
+  let inCodeBlock = false;
+
+  return `<!DOCTYPE html>
+<html><head></head><body><style>@import "/public/main.css";</style><pre>${bodyLines
+    .map((line, index) => {
+      const linkedLine = line.replaceAll(
+        /(https:\/\/[^\s\)]+)/gi,
+        '<a href="$&">$&</a>'
+      );
+      const lineNumber = String(index).padStart(maxCharactersInLineNumber, "0");
+      const lineId = `line-${lineNumber}`;
+
+      const isBackticks = line.trim() === "```";
+
+      if (isBackticks) {
+        inCodeBlock = !inCodeBlock;
+      }
+
+      const inCode = Boolean(inCodeBlock || isBackticks);
+
+      return `<div class="line" id="${lineId}"><a class="line-link" href="#${lineId}">${lineNumber}</a><span class="space">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="${inCode ? "codeblock" : ""}">${inCode ? line : linkedLine}</span></div>`;
+    })
+    .join("\n")}</pre></body></html>`;
+}
+
+````
+
+just a little magic
+
+---
+
+whoops i wrote a bunch of code without documenting it.
+
+i just needed to experiment with the styling.
+
+I actually should review and refactor at some point because there is too many
+dom nodes for what i am trying to do here.

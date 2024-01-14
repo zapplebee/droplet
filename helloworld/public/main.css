@@ -1,6 +1,8 @@
-html,
 body {
   background-color: black;
+  max-width: 85ch;
+  min-width: 50ch;
+  margin: auto;
 }
 
 * {
@@ -13,12 +15,10 @@ body {
 }
 .line-link {
   color: #2f5c19;
-}
-.space,
-.line-link {
   -webkit-user-select: none;
   -ms-user-select: none;
   user-select: none;
+  white-space: pre;
 }
 
 main {
