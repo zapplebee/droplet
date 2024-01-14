@@ -3,6 +3,7 @@
   margin: 0;
   line-height: 16px;
   font-size: 16px !important;
+  color: #4d9c25;
 }
 
 body {
@@ -13,9 +14,6 @@ body {
   margin: auto;
 }
 
-* {
-  color: #4d9c25;
-}
 .line {
   display: flex;
   flex-direction: row;
@@ -32,7 +30,6 @@ body {
 
 main {
   font-family: monospace;
-  overflow-wrap: break-word;
 }
 
 .codeblock {
