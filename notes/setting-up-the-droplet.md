@@ -2,6 +2,8 @@
 
 https://twitter.com/zapplebee
 
+https://github.com/zapplebee/droplet
+
 I have started way too many blogs and got caught up on the making it and not the writing.
 
 this is just plain text for that reason.
@@ -540,3 +542,12 @@ there's a couple things that need to happen in order for that to work as expecte
 3. create a line count column on the left site that has a link to the line itself.
 
 as i was doing this i thought i might need to start to tag where i am in the git repo so that if someone (me) wanted to follow along in the future, it would be easy
+
+```
+git show-ref
+3590fff8df7ecfcebd7f9379637977403549f62e refs/heads/main
+3590fff8df7ecfcebd7f9379637977403549f62e refs/remotes/origin/HEAD
+3590fff8df7ecfcebd7f9379637977403549f62e refs/remotes/origin/main
+```
+
+i sure could just let people do a git blame. but they might just be reading this as plain text.
