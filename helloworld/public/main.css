@@ -5,7 +5,7 @@
 .line {
   display: flex;
   flex-direction: row;
-  gap: 1rem;
+  gap: 2ch;
 }
 .line-link {
   color: #2f5c19;
@@ -30,9 +30,8 @@ main {
   max-width: 40ch;
   white-space: pre-wrap;
 }
-@media (min-width: 50ch) {
+@media (min-width: 100ch) {
   .prose {
     max-width: 80ch;
-    white-space: pre;
   }
 }
