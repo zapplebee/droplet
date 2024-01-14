@@ -1,6 +1,13 @@
+* {
+  padding: 0;
+  margin: 0;
+  line-height: 16px;
+}
+
 body {
   background-color: black;
-  max-width: 85ch;
+  /* the 80ch width of all the lines, plus 5 for three line number and the two ch gap */
+  width: 85ch;
   min-width: 50ch;
   margin: auto;
 }
@@ -19,6 +26,7 @@ body {
   -ms-user-select: none;
   user-select: none;
   white-space: pre;
+  width: 3ch;
 }
 
 main {
@@ -28,19 +36,20 @@ main {
 
 .codeblock {
   color: rgb(215, 246, 152);
+  width: 80ch;
   white-space: pre;
 }
 
 .codeblock-container {
-  max-width: 80ch;
+  width: 85ch;
   overflow-x: auto;
   background-color: rgb(63, 63, 63);
 }
 
 ::-webkit-scrollbar {
-  height: 1ch;
+  height: 1rem;
   width: 1ch;
-  background: black;
+  background: rgb(63, 63, 63);
 }
 
 ::-webkit-scrollbar-thumb {
@@ -48,15 +57,11 @@ main {
 }
 
 ::-webkit-scrollbar-corner {
-  background: #000;
+  background: rgb(63, 63, 63);
 }
 
 .prose {
-  max-width: 40ch;
+  width: 80ch;
   white-space: pre-wrap;
-}
-@media (min-width: 100ch) {
-  .prose {
-    max-width: 75ch;
-  }
+  overflow-wrap: break-word;
 }
