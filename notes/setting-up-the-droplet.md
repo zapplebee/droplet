@@ -521,3 +521,22 @@ Bun.serve({
 });
 
 ```
+
+---
+
+although I do really like this just one long file method,
+there's something not quite right about it.
+
+and that's the ability to link to a specific piece of content.
+
+I think that the best course of action is just to create id anchors for every line.
+
+then one can easily deep link directly to a place on the page.
+
+there's a couple things that need to happen in order for that to work as expected.
+
+1. i need to split the file line by line.
+2. map those back together with a link at the start of the line.
+3. create a line count column on the left site that has a link to the line itself.
+
+as i was doing this i thought i might need to start to tag where i am in the git repo so that if someone (me) wanted to follow along in the future, it would be easy
