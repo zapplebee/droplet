@@ -37,13 +37,29 @@ export async function getAsHtml(): Promise<string> {
 
       const isBackticks = line.startsWith("```");
 
+      let addOpenTag = false;
+      let addCloseTag = false;
+
+      if (isBackticks && !inCodeBlock) {
+        addOpenTag = true;
+      }
+
       if (isBackticks) {
         inCodeBlock = !inCodeBlock;
       }
 
+      if (!inCodeBlock && isBackticks) {
+        addCloseTag = true;
+      }
+
       const inCode = Boolean(inCodeBlock || isBackticks);
 
-      return `<div class="line" id="${lineId}"><a class="line-link" href="#${lineId}">${lineNumber}</a><span class="${inCode ? "codeblock" : "prose"}">${inCode ? line : linkedLine}</span></div>`;
+      const openTag = addOpenTag
+        ? `<div class="codeblock-container"><div class="codeblock-wrapper">`
+        : "";
+      const closeTag = addCloseTag ? `</div></div>` : "";
+
+      return `${openTag}<div class="line" id="${lineId}"><a class="line-link" href="#${lineId}">${lineNumber}</a><span class="${inCode ? "codeblock" : "prose"}">${inCode ? line : linkedLine}</span></div>${closeTag}`;
     })
     .join("\n")}</main></body></html>`;
 }

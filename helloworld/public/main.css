@@ -1,5 +1,9 @@
-* {
+html,
+body {
   background-color: black;
+}
+
+* {
   color: #4d9c25;
 }
 .line {
@@ -19,11 +23,32 @@
 
 main {
   font-family: monospace;
+  overflow-wrap: break-word;
 }
 
 .codeblock {
   color: rgb(215, 246, 152);
   white-space: pre;
+}
+
+.codeblock-container {
+  max-width: 80ch;
+  overflow-x: auto;
+  background-color: rgb(63, 63, 63);
+}
+
+::-webkit-scrollbar {
+  height: 1ch;
+  width: 1ch;
+  background: black;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgb(215, 246, 152);
+}
+
+::-webkit-scrollbar-corner {
+  background: #000;
 }
 
 .prose {
@@ -32,6 +57,6 @@ main {
 }
 @media (min-width: 100ch) {
   .prose {
-    max-width: 80ch;
+    max-width: 75ch;
   }
 }
