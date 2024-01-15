@@ -43,7 +43,7 @@ export async function getAsHtml(
   const metaImage = "/meta.png";
   const headTags = `
 <meta charset="utf-8" />
-<meta name="viewport" content="width=400px, initial-scale=1" />
+<meta name="viewport" content="width=400, initial-scale=1" />
 <!-- Primary Meta Tags -->
 <title>${title}</title>
 <meta name="title" content="${title}" />
