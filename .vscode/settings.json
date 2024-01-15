@@ -1,0 +1,25 @@
+{
+  "cSpell.enableFiletypes": [
+    "!javascript",
+    "!javascriptreact",
+    "!typescript",
+    "!typescriptreact"
+  ],
+  "cSpell.words": [
+    "ALPN",
+    "ardeshir",
+    "certbot",
+    "certonly",
+    "dont",
+    "helloworld",
+    "KHTML",
+    "letsencrypt",
+    "lptn",
+    "prettybirdserver",
+    "privkey",
+    "Rampersad",
+    "restartbun",
+    "skalko",
+    "zapplebee"
+  ]
+}
