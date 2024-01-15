@@ -950,3 +950,21 @@ the simple form of it has let me write almost 1000 lines already!
 in fact
 
 TODO: fix the fact that right now the line number width is fixed to three characters
+
+i'd also like some kind of convention for being able to write long form segments that get their own page
+
+something like
+
+<POST slug="/first-actual-post" summary="This is the first real post other than the endless log">
+# hello world.
+
+this is the first actual blog post of the site. the log is there for everything but
+sometimes i will want to be able to write specific content.
+</POST>
+
+honestly, i think that i'm happy enought with that as a pattern
+
+the landing page of the site should show something like the last 10 lines of
+the log with a link to the full log
+
+and then posts as links.
