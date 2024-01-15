@@ -27,6 +27,7 @@ export async function getAsHtml(
   { focusId }: GetAsHtmlProps = { focusId: undefined }
 ): Promise<GetAsHtmlResult> {
   const ids: Set<string> = new Set([]);
+  const focusIdMap: Map<string, string> = new Map();
   const filepaths = await getFilePaths();
   const files = filepaths.map((e) => Bun.file(e));
   const fileContents = await Promise.all(files.map((e) => e.text()));
@@ -37,46 +38,6 @@ export async function getAsHtml(
 
   let inCodeBlock = false;
 
-  const description = "Zac's Log";
-  const title = "Zac's Log";
-  const canonicalURL = "https://zapplebee.online";
-  const metaImage = "https://zapplebee.online/meta.png";
-  const headTags = `
-<meta charset="utf-8" />
-<link rel="icon" type="image/png" href="${metaImage}" />
-<meta name="viewport" content="width=400, initial-scale=1" />
-<!-- Primary Meta Tags -->
-<title>${title}</title>
-<meta name="title" content="${title}" />
-<meta name="description" content="${description}" />
-
-<!-- Open Graph / Facebook -->
-<meta property="og:type" content="website" />
-<meta property="og:url" content="${canonicalURL}" />
-<meta property="og:title" content="${title}" />
-<meta property="og:description" content="${description}" />
-<meta property="og:image" content="${metaImage}" />
-
-<!-- Twitter -->
-<meta property="twitter:card" content="summary" />
-<meta property="twitter:url" content="${canonicalURL}" />
-<meta property="twitter:title" content="${title}" />
-<meta property="twitter:description" content="${description}" />
-<meta property="twitter:image" content="${metaImage}" />
-
-<!-- Mastodon -->
-<link href="https://mastodon.cloud/@zapplebee" rel="me" />
-<style>@import "/public/main.css";</style>
-`;
-
-  const head = `<!DOCTYPE html>
-<html lang="en">
-<head>
-${headTags}
-</head>
-<body>
-<main>`;
-
   const main = bodyLines
     .map((line, index) => {
       const rawLine = rawBodyLines[index];
@@ -84,6 +45,7 @@ ${headTags}
       const lineId = `line-${index}`;
 
       ids.add(lineId);
+      focusIdMap.set(lineId, line);
 
       const isBackticks = line.startsWith("```");
 
@@ -118,7 +80,11 @@ ${headTags}
         const slugRegex = /(.+slug=")([^"]+)(".+)/;
         slug = rawLine.replace(slugRegex, "$2");
 
+        const descriptionRegex = /(.+description=")([^"]+)(".+)/;
+
+        const description = rawLine.replace(descriptionRegex, "$2");
         ids.add(slug);
+        focusIdMap.set(slug, Bun.escapeHTML(description));
         lineText = lineText.replace(slug, `<a href="/${slug}">${slug}</a>`);
       }
 
@@ -158,6 +124,54 @@ ${headTags}
   }
 
   const tail = `</main>${scrollToScript}</body></html>`;
+
+  let description = "Zac's Log";
+  let title = "Zac's Log";
+  let canonicalURL = "https://zapplebee.online";
+  let metaImage = "https://zapplebee.online/meta.png";
+
+  if (focusId && ids.has(focusId)) {
+    canonicalURL = `https://zapplebee.online/${focusId}`;
+    const focusDescription = focusIdMap.get(focusId) as string;
+    description = focusDescription === "" ? description : focusDescription;
+    scrollToScript = `<script>window['${focusId}'].scrollIntoView(true);</script>`;
+  }
+
+  const headTags = `
+<meta charset="utf-8" />
+<link rel="icon" type="image/png" href="${metaImage}" />
+<meta name="viewport" content="width=400, initial-scale=1" />
+<!-- Primary Meta Tags -->
+<title>${title}</title>
+<meta name="title" content="${title}" />
+<meta name="description" content="${description}" />
+
+<!-- Open Graph / Facebook -->
+<meta property="og:type" content="website" />
+<meta property="og:url" content="${canonicalURL}" />
+<meta property="og:title" content="${title}" />
+<meta property="og:description" content="${description}" />
+<meta property="og:image" content="${metaImage}" />
+
+<!-- Twitter -->
+<meta property="twitter:card" content="summary" />
+<meta property="twitter:url" content="${canonicalURL}" />
+<meta property="twitter:title" content="${title}" />
+<meta property="twitter:description" content="${description}" />
+<meta property="twitter:image" content="${metaImage}" />
+
+<!-- Mastodon -->
+<link href="https://mastodon.cloud/@zapplebee" rel="me" />
+<style>@import "/public/main.css";</style>
+`;
+
+  const head = `<!DOCTYPE html>
+<html lang="en">
+<head>
+${headTags}
+</head>
+<body>
+<main>`;
 
   return {
     html: [head, main, tail].join(""),
