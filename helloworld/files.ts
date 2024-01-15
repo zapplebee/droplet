@@ -28,7 +28,13 @@ export async function getAsHtml(): Promise<string> {
   const headTags = `
 <title>zapplebee.prettybirdserver.com</title>
 <meta name="viewport" content="width=400px, initial-scale=1" />
-<meta name="description" content="Zac Skalko's Log">
+<meta name="description" content="Zac Skalko's Log, desc">
+<meta property="og:title" content="Zac Skalko's Log">
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://zapplebee.prettybirdserver.com">
+<meta property="og:description" content="A full log of Zac's fun little computer project, og:desc">
+<meta property="og:site_name" content="zapplebee.prettybirdserver.com">
+<meta name="twitter:site" content="@zapplebee">
 <style>@import "/public/main.css";</style>
 `;
 
