@@ -1,3 +1,15 @@
+:root {
+  --textwidth: 40ch;
+  --linenumberwidth: 3ch;
+  --gapwidth: 2ch;
+}
+
+@media (min-width: 500px) {
+  :root {
+    --textwidth: 80ch;
+  }
+}
+
 * {
   padding: 0;
   margin: 0;
@@ -17,8 +29,8 @@ body {
 }
 
 main {
-  /* the 80ch width of all the lines, plus 5 for three line number and the two ch gap */
-  width: 85ch;
+  font-family: monospace;
+  width: calc(var(--textwidth) + var(--linenumberwidth) + var(--gapwidth));
   margin: auto;
   display: block;
 }
@@ -26,7 +38,7 @@ main {
 .line {
   display: flex;
   flex-direction: row;
-  gap: 2ch;
+  gap: var(--gapwidth);
 }
 .line-link {
   color: #2f5c19;
@@ -34,24 +46,25 @@ main {
   -ms-user-select: none;
   user-select: none;
   white-space: pre;
-  width: 3ch;
+  width: var(--linenumberwidth);
 }
 
-main {
-  font-family: monospace;
+.codeblock-container {
+  width: calc(var(--textwidth) + var(--linenumberwidth) + var(--gapwidth));
+  overflow-x: auto;
+  overflow-y: hidden;
+  background-color: rgb(63, 63, 63);
 }
 
 .codeblock {
   color: rgb(215, 246, 152);
-  width: 80ch;
   white-space: pre;
 }
 
-.codeblock-container {
-  width: 85ch;
-  overflow-x: auto;
-  overflow-y: hidden;
-  background-color: rgb(63, 63, 63);
+.prose {
+  width: var(--textwidth);
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
 }
 
 ::-webkit-scrollbar {
@@ -66,10 +79,4 @@ main {
 
 ::-webkit-scrollbar-corner {
   background: rgb(63, 63, 63);
-}
-
-.prose {
-  width: 80ch;
-  white-space: pre-wrap;
-  overflow-wrap: break-word;
 }
