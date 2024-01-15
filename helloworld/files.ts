@@ -28,11 +28,12 @@ export async function getAsHtml(): Promise<string> {
   const headTags = `
 <title>zapplebee.prettybirdserver.com</title>
 <meta name="viewport" content="width=400px, initial-scale=1" />
+<meta name="description" content="Zac Skalko's Log">
 <style>@import "/public/main.css";</style>
 `;
 
   const head = `<!DOCTYPE html>
-<html><head>${headTags}</head><body><main>`;
+<html lang="en"><head>${headTags}</head><body><main>`;
 
   const tail = `</main></body></html>`;
 
