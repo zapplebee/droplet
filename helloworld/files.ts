@@ -29,7 +29,6 @@ export async function getAsHtml(): Promise<string> {
   const title = "Zac's Log";
   const canonicalURL = "https://zapplebee.prettybirdserver.com";
   const headTags = `
-<title>zapplebee.prettybirdserver.com</title>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=400px, initial-scale=1" />
 <!-- Primary Meta Tags -->
