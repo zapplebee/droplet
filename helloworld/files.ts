@@ -25,23 +25,29 @@ export async function getAsHtml(): Promise<string> {
 
   let inCodeBlock = false;
 
-  return `<!DOCTYPE html>
-<html><head></head><body><style>@import "/public/main.css";</style><main>${bodyLines
+  const headTags = `
+<title>zapplebee.prettybirdserver.com</title>
+<meta name="viewport" content="width=400px, initial-scale=1" />
+<style>@import "/public/main.css";</style>
+`;
+
+  const head = `<!DOCTYPE html>
+<html><head>${headTags}</head><body><main>`;
+
+  const tail = `</main></body></html>`;
+
+  const main = bodyLines
     .map((line, index) => {
-      const linkedLine = line.replaceAll(
-        /(https:\/\/[^\s\)]+)/gi,
-        '<a href="$&">$&</a>'
-      );
       const lineNumber = String(index).padStart(maxCharactersInLineNumber, "0");
       const lineId = `line-${lineNumber}`;
 
       const isBackticks = line.startsWith("```");
 
-      let addOpenTag = false;
-      let addCloseTag = false;
+      let addCodeBlockOpenTag = false;
+      let addCodeBlockCloseTag = false;
 
       if (isBackticks && !inCodeBlock) {
-        addOpenTag = true;
+        addCodeBlockOpenTag = true;
       }
 
       if (isBackticks) {
@@ -49,17 +55,35 @@ export async function getAsHtml(): Promise<string> {
       }
 
       if (!inCodeBlock && isBackticks) {
-        addCloseTag = true;
+        addCodeBlockCloseTag = true;
       }
 
       const inCode = Boolean(inCodeBlock || isBackticks);
 
-      const openTag = addOpenTag
+      const lineText = inCode
+        ? line
+        : line.replaceAll(/(https:\/\/[^\s\)]+)/gi, '<a href="$&">$&</a>');
+
+      const containerOpenTag = addCodeBlockOpenTag
         ? `<div class="codeblock-container"><div class="codeblock-wrapper">`
         : "";
-      const closeTag = addCloseTag ? `</div></div>` : "";
 
-      return `${openTag}<div class="line" id="${lineId}"><a class="line-link" href="#${lineId}">${lineNumber}</a><span class="${inCode ? "codeblock" : "prose"}">${inCode ? line : linkedLine}</span></div>${closeTag}`;
+      const openingLineTag = `<div class="line" id="${lineId}">`;
+      const lineIdxElement = `<a class="line-link" href="#${lineId}">${lineNumber}</a>`;
+      const lineStrElement = `<span class="${inCode ? "codeblock" : "prose"}">${lineText}</span>`;
+      const closingLineTag = `</div>`;
+      const containerCloseTag = addCodeBlockCloseTag ? `</div></div>` : "";
+
+      return [
+        containerOpenTag,
+        openingLineTag,
+        lineIdxElement,
+        lineStrElement,
+        closingLineTag,
+        containerCloseTag,
+      ].join("");
     })
-    .join("\n")}</main></body></html>`;
+    .join("");
+
+  return [head, main, tail].join("");
 }
