@@ -3,12 +3,8 @@ import { getAsHtml } from "./files";
 const PRODUCTION_CONFIG = {
   port: 443,
   tls: {
-    cert: Bun.file(
-      "/etc/letsencrypt/live/zapplebee.prettybirdserver.com/cert.pem"
-    ),
-    key: Bun.file(
-      "/etc/letsencrypt/live/zapplebee.prettybirdserver.com/privkey.pem"
-    ),
+    cert: Bun.file("/etc/letsencrypt/live/zapplebee.online/cert.pem"),
+    key: Bun.file("/etc/letsencrypt/live/zapplebee.online/privkey.pem"),
   },
 } as const;
 
