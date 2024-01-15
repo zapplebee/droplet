@@ -14,13 +14,25 @@ export async function getFilePaths(): Promise<Array<string>> {
   return filepaths;
 }
 
-export async function getAsHtml(): Promise<string> {
+export type GetAsHtmlProps = {
+  focusId?: string;
+};
+
+type GetAsHtmlResult = {
+  focusIdExists: boolean;
+  html: string;
+};
+
+export async function getAsHtml(
+  { focusId }: GetAsHtmlProps = { focusId: undefined }
+): Promise<GetAsHtmlResult> {
+  const ids: Set<string> = new Set([]);
   const filepaths = await getFilePaths();
   const files = filepaths.map((e) => Bun.file(e));
   const fileContents = await Promise.all(files.map((e) => e.text()));
   const rawBody = fileContents.join("\n---\n").replaceAll("\r", "");
-  const escapedBody = Bun.escapeHTML(rawBody);
-  const bodyLines = escapedBody.split("\n");
+  const rawBodyLines = rawBody.split("\n");
+  const bodyLines = rawBodyLines.map((e) => Bun.escapeHTML(e));
   const maxCharactersInLineNumber = String(bodyLines.length).length;
 
   let inCodeBlock = false;
@@ -58,12 +70,13 @@ export async function getAsHtml(): Promise<string> {
   const head = `<!DOCTYPE html>
 <html lang="en"><head>${headTags}</head><body><main>`;
 
-  const tail = `</main></body></html>`;
-
   const main = bodyLines
     .map((line, index) => {
+      const rawLine = rawBodyLines[index];
       const lineNumber = String(index).padStart(maxCharactersInLineNumber, "0");
-      const lineId = `line-${lineNumber}`;
+      const lineId = `line-${index}`;
+
+      ids.add(lineId);
 
       const isBackticks = line.startsWith("```");
 
@@ -84,30 +97,63 @@ export async function getAsHtml(): Promise<string> {
 
       const inCode = Boolean(inCodeBlock || isBackticks);
 
-      const lineText = inCode
+      const isPostStart = !inCodeBlock && rawLine.startsWith("<POST");
+
+      const isPostEnd = !inCodeBlock && rawLine.startsWith("</POST>");
+
+      let slug = null;
+
+      let lineText = inCode
         ? line
         : line.replaceAll(/(https:\/\/[^\s\)]+)/gi, '<a href="$&">$&</a>');
+
+      if (isPostStart) {
+        const slugRegex = /(.+slug=")([^"]+)(".+)/;
+        slug = rawLine.replace(slugRegex, "$2");
+
+        ids.add(slug);
+        lineText = lineText.replace(slug, `<a href="/${slug}">${slug}</a>`);
+      }
+
+      const lineClass = inCode ? "codeblock" : "prose";
+
+      const postOpenTag = slug
+        ? `<div class="post-container" id="${slug}"><div class="post-wrapper">`
+        : "";
 
       const containerOpenTag = addCodeBlockOpenTag
         ? `<div class="codeblock-container"><div class="codeblock-wrapper">`
         : "";
 
       const openingLineTag = `<div class="line" id="${lineId}">`;
-      const lineIdxElement = `<a class="line-link" href="#${lineId}">${lineNumber}</a>`;
-      const lineStrElement = `<span class="${inCode ? "codeblock" : "prose"}">${lineText}</span>`;
+      const lineIdxElement = `<a class="line-link" href="/${lineId}">${lineNumber}</a>`;
+      const lineStrElement = `<span class="${lineClass}">${lineText}</span>`;
       const closingLineTag = `</div>`;
       const containerCloseTag = addCodeBlockCloseTag ? `</div></div>` : "";
+      const postCloseTag = isPostEnd ? `</div></div>` : "";
 
       return [
+        postOpenTag,
         containerOpenTag,
         openingLineTag,
         lineIdxElement,
         lineStrElement,
         closingLineTag,
         containerCloseTag,
+        postCloseTag,
       ].join("");
     })
     .join("");
 
-  return [head, main, tail].join("");
+  let scrollToScript = "";
+  if (focusId && ids.has(focusId)) {
+    scrollToScript = `<script>window['${focusId}'].scrollIntoView(true);</script>`;
+  }
+
+  const tail = `</main>${scrollToScript}</body></html>`;
+
+  return {
+    html: [head, main, tail].join(""),
+    focusIdExists: focusId === undefined || ids.has(focusId),
+  };
 }

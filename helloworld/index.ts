@@ -1,4 +1,4 @@
-import { getAsHtml } from "./files" with { type: "macro" };
+import { getAsHtml } from "./files";
 
 const PRODUCTION_CONFIG = {
   port: 443,
@@ -20,11 +20,6 @@ const IS_PRODUCTON = process.env.NODE_ENV === "production";
 
 const LIVE_CONFIG = IS_PRODUCTON ? PRODUCTION_CONFIG : DEV_CONFIG;
 
-const HTML_CONTENT = await getAsHtml();
-
-const data = Buffer.from(HTML_CONTENT);
-const HTML_RESPONSE_BODY = Bun.gzipSync(data);
-
 const CSS_RESPONSE_BODY = Bun.gzipSync(
   Buffer.from(await Bun.file("./public/main.css").arrayBuffer())
 );
@@ -35,7 +30,7 @@ Bun.serve({
     console.log(req.method, req.url);
     const requestUrl = new URL(req.url);
 
-    const cssRequestPath = new URL("/public/main.css", requestUrl.origin);
+    console.log(requestUrl);
 
     if (requestUrl.pathname === "/public/main.css") {
       return new Response(CSS_RESPONSE_BODY, {
@@ -45,6 +40,13 @@ Bun.serve({
         },
       });
     }
+
+    const focusId = requestUrl.pathname.replace(/^\//, "");
+
+    const { html } = await getAsHtml({ focusId });
+
+    const data = Buffer.from(html);
+    const HTML_RESPONSE_BODY = Bun.gzipSync(data);
 
     return new Response(HTML_RESPONSE_BODY, {
       headers: {

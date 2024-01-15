@@ -56,6 +56,21 @@ main {
   background-color: rgb(35, 35, 35);
 }
 
+.post-container {
+  padding-top: 2rem;
+  padding-bottom: 2rem;
+  width: calc(var(--textwidth) + var(--linenumberwidth) + var(--gapwidth));
+  overflow-y: hidden;
+  color: rgb(230, 230, 230);
+  background-color: rgb(66, 25, 25);
+  .prose {
+    color: rgb(230, 230, 230);
+  }
+  a {
+    color: rgb(82, 206, 217);
+  }
+}
+
 .codeblock {
   color: rgb(152, 235, 246);
   white-space: pre;
