@@ -32,9 +32,8 @@ const CSS_RESPONSE_BODY = Bun.gzipSync(
 Bun.serve({
   hostname: "0.0.0.0",
   fetch: async function fetch(req) {
-    console.log(req.url);
+    console.log(req.method, req.url);
     const requestUrl = new URL(req.url);
-    console.log(requestUrl);
 
     const cssRequestPath = new URL("/public/main.css", requestUrl.origin);
 
