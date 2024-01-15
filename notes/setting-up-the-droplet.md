@@ -923,3 +923,14 @@ the other accessibility thing I should do is probably add image roles for the em
 https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Roles/img_role
 
 (exactly unlike above...)
+
+i would also like a way to be able to add content from my phone.
+
+this is meant, in part, as a replacement for _centralized microblogging platform formerly known as twitter_
+in case you couldn't tell from my typing voice. haha.
+
+i tried mastodon, but i just didn't get it or something.
+
+so the ability to add content whenever, whereever would be nice.
+
+stretch goal would be to add the ability to comment on lines.
