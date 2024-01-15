@@ -934,3 +934,13 @@ i tried mastodon, but i just didn't get it or something.
 so the ability to add content whenever, whereever would be nice.
 
 stretch goal would be to add the ability to comment on lines.
+
+one of the goals of this site is to practice progressive by incremental improvement of this feed.
+backwards compatibility too.
+
+since right now this is just a giant markdown file,
+it could obviously be replatformed.
+
+the other goal is that all the changes to the site get logged here.
+
+think of it as a git log + architecture decision record + readme + bullet journal + social media
