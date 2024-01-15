@@ -29,7 +29,11 @@ const IMAGE = Buffer.from(await Bun.file("./meta.png").arrayBuffer());
 Bun.serve({
   hostname: "0.0.0.0",
   fetch: async function fetch(req) {
-    console.log(req.method, req.url);
+    console.log(
+      req.method,
+      req.url,
+      req.headers.get("User-Agent") ?? "NO_USER_AGENT"
+    );
     const requestUrl = new URL(req.url);
 
     const acceptsGzip = req.headers.get("Content-Encoding")?.includes("gzip");
@@ -48,6 +52,16 @@ Bun.serve({
         headers: {
           ...encodingHeaders,
           "Content-type": "text/css; charset=utf-8",
+        },
+      });
+    }
+
+    if (requestUrl.pathname === "/robots.txt") {
+      return new Response(compress(Buffer.from("User-agent: *\nDisallow:\n")), {
+        headers: {
+          ...encodingHeaders,
+          "Content-type": "text/plain",
+          "Cache-Control": "max-age: 31536000, immutable",
         },
       });
     }
