@@ -43,6 +43,7 @@ export async function getAsHtml(
   const metaImage = "https://zapplebee.prettybirdserver.com/meta.png";
   const headTags = `
 <meta charset="utf-8" />
+<link rel="icon" type="image/png" href="${metaImage}" />
 <meta name="viewport" content="width=400, initial-scale=1" />
 <!-- Primary Meta Tags -->
 <title>${title}</title>
