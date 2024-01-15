@@ -679,3 +679,190 @@ i just needed to experiment with the styling.
 
 I actually should review and refactor at some point because there is too many
 dom nodes for what i am trying to do here.
+
+---
+
+I refactored the render function a little to make it more readable.
+
+Broke the massive template string into a few variables and mashed them together.
+
+Variable names are free documentation.
+
+````
+export async function getAsHtml(): Promise<string> {
+  const filepaths = await getFilePaths();
+  const files = filepaths.map((e) => Bun.file(e));
+  const fileContents = await Promise.all(files.map((e) => e.text()));
+  const rawBody = fileContents.join("\n---\n").replaceAll("\r", "");
+  const escapedBody = Bun.escapeHTML(rawBody);
+  const bodyLines = escapedBody.split("\n");
+  const maxCharactersInLineNumber = String(bodyLines.length).length;
+
+  let inCodeBlock = false;
+
+  const headTags = `
+<title>zapplebee.prettybirdserver.com</title>
+<style>@import "/public/main.css";</style>
+`;
+
+  const head = `<!DOCTYPE html>
+<html><head>${headTags}</head><body><main>`;
+
+  const tail = `</main></body></html>`;
+
+  const main = bodyLines.map((line, index) => {
+    const lineNumber = String(index).padStart(maxCharactersInLineNumber, "0");
+    const lineId = `line-${lineNumber}`;
+
+    const isBackticks = line.startsWith("```");
+
+    let addCodeBlockOpenTag = false;
+    let addCodeBlockCloseTag = false;
+
+    if (isBackticks && !inCodeBlock) {
+      addCodeBlockOpenTag = true;
+    }
+
+    if (isBackticks) {
+      inCodeBlock = !inCodeBlock;
+    }
+
+    if (!inCodeBlock && isBackticks) {
+      addCodeBlockCloseTag = true;
+    }
+
+    const inCode = Boolean(inCodeBlock || isBackticks);
+
+    const lineText = inCode
+      ? line
+      : line.replaceAll(/(https:\/\/[^\s\)]+)/gi, '<a href="$&">$&</a>');
+
+    const containerOpenTag = addCodeBlockOpenTag
+      ? `<div class="codeblock-container"><div class="codeblock-wrapper">`
+      : "";
+
+    const openingLineTag = `<div class="line" id="${lineId}">`;
+    const lineIdxElement = `<a class="line-link" href="#${lineId}">${lineNumber}</a>`;
+    const lineStrElement = `<span class="${inCode ? "codeblock" : "prose"}">${lineText}</span>`;
+    const closingLineTag = `</div>`;
+    const containerCloseTag = addCodeBlockCloseTag ? `</div></div>` : "";
+
+    return [
+      containerOpenTag,
+      openingLineTag,
+      lineIdxElement,
+      lineStrElement,
+      closingLineTag,
+      containerCloseTag,
+    ].join("");
+  }).join("");
+
+  return [head, main, tail].join("");
+}
+
+````
+
+as for the styles. i found a new property that i have never run into before
+
+```
+  -moz-text-size-adjust: none;
+  -webkit-text-size-adjust: none;
+  text-size-adjust: none;
+```
+
+I could not figure out what was making my fonts all messed up
+despite the `!important` tag.
+
+This is what I get for using somebody else's CSS reset all the time.
+
+Finally made the CSS into something i could tolerate.
+It's interesting how dependant I have become on CSS-in-JS or tailwind
+
+This was harder than I remember it being.
+
+```
+
+:root {
+  --textwidth: 40ch;
+  --linenumberwidth: 3ch;
+  --gapwidth: 2ch;
+}
+
+@media (min-width: 500px) {
+  :root {
+    --textwidth: 80ch;
+  }
+}
+
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  line-height: 1.2rem;
+  font-size: 16px;
+  font-weight: 400;
+  color: #4d9c25;
+  -moz-text-size-adjust: none;
+  -webkit-text-size-adjust: none;
+  text-size-adjust: none;
+}
+
+body {
+  background-color: black;
+  display: block;
+}
+
+main {
+  font-family: monospace;
+  width: calc(var(--textwidth) + var(--linenumberwidth) + var(--gapwidth));
+  margin: auto;
+  display: block;
+}
+
+.line {
+  display: flex;
+  flex-direction: row;
+  gap: var(--gapwidth);
+}
+.line-link {
+  color: #2f5c19;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  white-space: pre;
+  width: var(--linenumberwidth);
+}
+
+.codeblock-container {
+  width: calc(var(--textwidth) + var(--linenumberwidth) + var(--gapwidth));
+  overflow-x: auto;
+  overflow-y: hidden;
+  background-color: rgb(63, 63, 63);
+}
+
+.codeblock {
+  color: rgb(215, 246, 152);
+  white-space: pre;
+}
+
+.prose {
+  width: var(--textwidth);
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
+}
+
+::-webkit-scrollbar {
+  height: 1rem;
+  width: 1ch;
+  background: rgb(63, 63, 63);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgb(215, 246, 152);
+}
+
+::-webkit-scrollbar-corner {
+  background: rgb(63, 63, 63);
+}
+
+```
