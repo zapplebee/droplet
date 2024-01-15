@@ -968,3 +968,11 @@ the landing page of the site should show something like the last 10 lines of
 the log with a link to the full log
 
 and then posts as links.
+
+---
+
+i was trying to set some html meta tags.
+
+as usual, i stole from ryan
+
+https://github.com/ryanmr/blog/blob/main/src/components/BaseHead.astro
