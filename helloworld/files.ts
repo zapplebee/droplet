@@ -39,8 +39,8 @@ export async function getAsHtml(
 
   const description = "Zac's Log";
   const title = "Zac's Log";
-  const canonicalURL = "https://zapplebee.prettybirdserver.com";
-  const metaImage = "https://zapplebee.prettybirdserver.com/meta.png";
+  const canonicalURL = "https://zapplebee.online";
+  const metaImage = "https://zapplebee.online/meta.png";
   const headTags = `
 <meta charset="utf-8" />
 <link rel="icon" type="image/png" href="${metaImage}" />
