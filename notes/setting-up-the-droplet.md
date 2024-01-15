@@ -944,3 +944,9 @@ it could obviously be replatformed.
 the other goal is that all the changes to the site get logged here.
 
 think of it as a git log + architecture decision record + readme + bullet journal + social media
+
+the simple form of it has let me write almost 1000 lines already!
+
+in fact
+
+TODO: fix the fact that right now the line number width is fixed to three characters
