@@ -70,7 +70,12 @@ export async function getAsHtml(
 `;
 
   const head = `<!DOCTYPE html>
-<html lang="en"><head>${headTags}</head><body><main>`;
+<html lang="en">
+<head>
+${headTags}
+</head>
+<body>
+<main>`;
 
   const main = bodyLines
     .map((line, index) => {
