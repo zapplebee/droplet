@@ -40,7 +40,7 @@ export async function getAsHtml(
   const description = "Zac's Log";
   const title = "Zac's Log";
   const canonicalURL = "https://zapplebee.prettybirdserver.com";
-  const metaImage = "/meta.png";
+  const metaImage = "https://zapplebee.prettybirdserver.com/meta.png";
   const headTags = `
 <meta charset="utf-8" />
 <meta name="viewport" content="width=400, initial-scale=1" />
