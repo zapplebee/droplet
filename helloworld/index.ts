@@ -24,6 +24,10 @@ const CSS_RESPONSE_BODY = Bun.gzipSync(
   Buffer.from(await Bun.file("./public/main.css").arrayBuffer())
 );
 
+const IMAGE = Bun.gzipSync(
+  Buffer.from(await Bun.file("./meta.png").arrayBuffer())
+);
+
 Bun.serve({
   hostname: "0.0.0.0",
   fetch: async function fetch(req) {
@@ -37,6 +41,16 @@ Bun.serve({
         headers: {
           "Content-Encoding": "gzip",
           "Content-type": "text/css; charset=utf-8",
+        },
+      });
+    }
+
+    if (requestUrl.pathname === "/meta.png") {
+      return new Response(IMAGE, {
+        headers: {
+          "Content-Encoding": "gzip",
+          "Content-type": "image/png",
+          "Cache-Control": "max-age: 31536000, immutable",
         },
       });
     }
