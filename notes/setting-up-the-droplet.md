@@ -866,3 +866,60 @@ main {
 }
 
 ```
+
+---
+
+the next thing i am going to have to figure out for this is images.
+
+they're tricky for a couple reasons.
+
+1. the style of this website doesn't really have anything that spans too
+   much vertical space
+2. they cost bandwidth in a way that the plain text just doesn't.
+3. i am trying to not load and js in the client for performance reasons
+   if i want to do any tricks to save bandwidth or just allow a peek at the image
+   that's going to be tough without js
+
+I have a bit of an idea
+
+I could load like, two lines of the image, and add a button to expand.
+
+like this
+
+imageurl: an-image.jpg
+🟦🟦🟦🟦🟦🟦🟦🟦🟦🟦🟦🟦🟦🟦
+🟦🟦🟦🟦🟦🟦🟦🟦🟦🟦🟦🟦🟦🟦
+🟦🟦🟦 click to expand 🟦🟦🟦
+
+imageurl: an-image.jpg
+🟦🟦🟦🟦🟦🟦🟦🟦🟦🟦🟦🟦🟦🟦
+🟦🟦🟦🟦🟦🟦🟦🟦🟦🟦🟦🟦🟦🟦
+🟦🟦🟦🟦🟦🟦🟦🟦🟦🟦🟦🟦🟦🟦
+🟦🟦🟦🟨🟦🟦🟦🟦🟨🟦🟦🟦🟦🟦
+🟦🟦🟦🟦🟦🟦🟦🟦🟦🟦🟦🟦🟦🟦
+🟦🟨🟦🟦🟦🟦🟦🟦🟦🟦🟨🟦🟦🟦
+🟦🟦🟨🟦🟦🟦🟦🟦🟦🟨🟦🟦🟦🟦
+🟦🟦🟦🟨🟨🟨🟨🟨🟨🟦🟦🟦🟦🟦
+🟦🟦🟦🟦🟦🟦🟦🟦🟦🟦🟦🟦🟦🟦
+🟦🟦🟦🟦🟦🟦🟦🟦🟦🟦🟦🟦🟦🟦
+🟦🟦🟦 click to close 🟦🟦🟦
+
+that could be done with just a checkbox and some custom styles
+
+but it wouldn't be very accessible.
+
+so far, as strange as the set of this site is, it is rather accessible.
+
+though i could bump up the contrast from the bg and the text,
+
+there's not a busy menu to navigate through via keyboard.
+
+there's no animations.
+
+theres' no dynamic loading of content.
+
+the other accessibility thing I should do is probably add image roles for the emoji
+
+https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Roles/img_role
+
+(exactly unlike above...)
