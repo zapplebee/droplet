@@ -5,7 +5,7 @@ services:
     build:
       context: ./helloworld
       dockerfile: Dockerfile
-    ports:
+    expose:
       - "80:80"
       - "443:443"
     volumes:
