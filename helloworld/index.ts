@@ -17,6 +17,8 @@ const DEV_CONFIG = {
 console.log({ IS_PRODUCTON });
 const LIVE_CONFIG = IS_PRODUCTON ? PRODUCTION_CONFIG : DEV_CONFIG;
 
+console.log(LIVE_CONFIG);
+
 Bun.serve({
   hostname: "0.0.0.0",
   fetch(req: Request) {
