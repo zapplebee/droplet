@@ -8,4 +8,4 @@ RUN bun install
 
 RUN bun build ./index.ts --compile --outfile webapp
 
-CMD ["webapp"]
+CMD ["./webapp"]
