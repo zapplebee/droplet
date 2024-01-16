@@ -2,11 +2,14 @@
   "name": "helloworld",
   "module": "index.ts",
   "type": "module",
+  "version": "0.0.0-alpha",
   "devDependencies": {
     "@types/bun": "latest",
     "prettier": "^3.2.1"
   },
   "scripts": {
+    "printversion": "bun scripts/printversion.ts",
+    "printenv": "bun scripts/printenv.ts",
     "prettier": "prettier **/*.ts --write"
   },
   "peerDependencies": {
