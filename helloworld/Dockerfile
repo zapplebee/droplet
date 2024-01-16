@@ -1,12 +1,11 @@
-FROM oven/bun:alpine
+FROM oven/bun:1
 
 WORKDIR /apps/helloworld
 
 COPY ./ /apps/helloworld
 
 RUN bun install
-EXPOSE 80
-EXPOSE 443
-RUN bun build ./index.ts --compile --outfile webapp
+EXPOSE 80/tcp
+EXPOSE 443/tcp
 
-CMD ["./webapp"]
+CMD ["bun", "index.ts"]
