@@ -23,8 +23,6 @@ export async function mainFetchHandler(req: Request) {
       }
     : { compress: (e: any) => e, encodingHeaders: {} };
 
-  console.log(requestUrl);
-
   if (requestUrl.pathname === "/public/main.css") {
     return new Response(compress(CSS_RESPONSE_BODY), {
       headers: {
