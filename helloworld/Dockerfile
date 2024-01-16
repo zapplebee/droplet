@@ -6,4 +6,6 @@ COPY ./ /apps/helloworld
 
 RUN bun install
 
-CMD ["bun", "index.ts"]
+RUN bun build ./index.ts --compile --outfile webapp
+
+CMD ["webapp"]
