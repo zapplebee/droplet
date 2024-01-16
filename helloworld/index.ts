@@ -13,23 +13,24 @@ const fullchainPath = join(CERTS_DIR, FQDN, `fullchain.pem`);
 const keyPath = join(CERTS_DIR, FQDN, `privkey.pem`);
 
 console.log({ fullchainPath, keyPath });
+setTimeout(() => {
+  Bun.serve({
+    hostname: "0.0.0.0",
+    port: 443,
+    tls: {
+      cert: Bun.file(fullchainPath),
+      key: Bun.file(keyPath),
+    },
+    fetch: mainFetchHandler,
+  });
 
-Bun.serve({
-  hostname: "0.0.0.0",
-  port: 443,
-  tls: {
-    cert: Bun.file(fullchainPath),
-    key: Bun.file(keyPath),
-  },
-  fetch: mainFetchHandler,
-});
-
-Bun.serve({
-  port: 80,
-  hostname: "0.0.0.0",
-  fetch(req) {
-    return Response.redirect(`${req.url.replace(/^http:/gi, "https:")}`, 302);
-  },
-});
+  Bun.serve({
+    port: 80,
+    hostname: "0.0.0.0",
+    fetch(req) {
+      return Response.redirect(`${req.url.replace(/^http:/gi, "https:")}`, 302);
+    },
+  });
+}, 1000);
 
 console.log("started: " + performance.now());
