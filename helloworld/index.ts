@@ -1,6 +1,6 @@
 import { IS_PRODUCTON, CERTS_DIR, FQDN } from "./env";
 import { join } from "node:path";
-import { getAsHtml } from "./files";
+import { mainFetchHandler } from "./main";
 
 const PRODUCTION_CONFIG = {
   port: 443,
@@ -16,76 +16,9 @@ const DEV_CONFIG = {
 
 const LIVE_CONFIG = IS_PRODUCTON ? PRODUCTION_CONFIG : DEV_CONFIG;
 
-const CSS_RESPONSE_BODY = Buffer.from(
-  await Bun.file("./public/main.css").arrayBuffer()
-);
-
-const IMAGE = Buffer.from(await Bun.file("./meta.png").arrayBuffer());
-
 Bun.serve({
   hostname: "0.0.0.0",
-  fetch: async function fetch(req) {
-    console.log(
-      req.method,
-      req.url,
-      req.headers.get("User-Agent") ?? "NO_USER_AGENT"
-    );
-    const requestUrl = new URL(req.url);
-
-    const acceptsGzip = req.headers.get("Content-Encoding")?.includes("gzip");
-
-    const { compress, encodingHeaders } = acceptsGzip
-      ? {
-          compress: Bun.gzipSync,
-          encodingHeaders: { "Content-Encoding": "gzip" },
-        }
-      : { compress: (e: any) => e, encodingHeaders: {} };
-
-    console.log(requestUrl);
-
-    if (requestUrl.pathname === "/public/main.css") {
-      return new Response(compress(CSS_RESPONSE_BODY), {
-        headers: {
-          ...encodingHeaders,
-          "Content-type": "text/css; charset=utf-8",
-        },
-      });
-    }
-
-    if (requestUrl.pathname === "/robots.txt") {
-      return new Response(compress(Buffer.from("User-agent: *\nDisallow:\n")), {
-        headers: {
-          ...encodingHeaders,
-          "Content-type": "text/plain",
-          "Cache-Control": "max-age: 31536000, immutable",
-        },
-      });
-    }
-
-    if (requestUrl.pathname === "/meta.png") {
-      return new Response(compress(IMAGE), {
-        headers: {
-          ...encodingHeaders,
-          "Content-type": "image/png",
-          "Cache-Control": "max-age: 31536000, immutable",
-        },
-      });
-    }
-
-    const focusId = requestUrl.pathname.replace(/^\//, "");
-
-    const { html } = await getAsHtml({ focusId });
-
-    const data = Buffer.from(html);
-
-    return new Response(compress(data), {
-      headers: {
-        ...encodingHeaders,
-        "Content-type": "text/html; charset=utf-8",
-        Link: `</public/main.css>; rel="prefetch"; as="style";`,
-      },
-    });
-  },
+  fetch: mainFetchHandler,
   ...LIVE_CONFIG,
 });
 
