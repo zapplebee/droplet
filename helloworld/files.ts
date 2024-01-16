@@ -1,4 +1,5 @@
 import { Glob } from "bun";
+import { join } from "node:path";
 import { NOTES_DIR, FQDN } from "./env";
 
 export async function getFilePaths(): Promise<Array<string>> {
@@ -7,7 +8,7 @@ export async function getFilePaths(): Promise<Array<string>> {
   const filepaths: Array<string> = [];
 
   for await (const file of glob.scan(NOTES_DIR)) {
-    filepaths.push(`${NOTES_DIR}${file}`);
+    filepaths.push(join(NOTES_DIR, file));
   }
 
   return filepaths;
