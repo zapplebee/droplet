@@ -2,7 +2,7 @@ FROM oven/bun:alpine
 
 WORKDIR /apps/helloworld
 
-ADD ./ /apps/helloworld
+COPY ./ /apps/helloworld
 
 RUN bun install
 
