@@ -21,7 +21,7 @@ Bun.serve({
   hostname: "0.0.0.0",
   fetch: mainFetchHandler,
   ...LIVE_CONFIG,
-});
+} as any);
 
 if (IS_PRODUCTON) {
   // no need to serve the redirects if we're not in prod
