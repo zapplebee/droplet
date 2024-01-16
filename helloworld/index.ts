@@ -21,16 +21,9 @@ console.log(LIVE_CONFIG);
 
 Bun.serve({
   hostname: "0.0.0.0",
-  fetch(req: Request) {
-    try {
-      return mainFetchHandler(req);
-    } catch (err) {
-      console.log(err);
-      throw err;
-    }
-  },
   ...LIVE_CONFIG,
-} as any);
+  fetch: mainFetchHandler,
+});
 
 if (IS_PRODUCTON) {
   // no need to serve the redirects if we're not in prod
