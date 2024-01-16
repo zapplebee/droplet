@@ -14,6 +14,7 @@ const DEV_CONFIG = {
   port: 3100,
 } as const;
 
+console.log({ IS_PRODUCTON });
 const LIVE_CONFIG = IS_PRODUCTON ? PRODUCTION_CONFIG : DEV_CONFIG;
 
 Bun.serve({
