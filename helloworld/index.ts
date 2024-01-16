@@ -9,8 +9,8 @@ if (!IS_PRODUCTON) {
   process.exit(1);
 }
 
-const fullchainPath = join(CERTS_DIR, FQDN, `fullchain.pem`);
-const keyPath = join(CERTS_DIR, FQDN, `privkey.pem`);
+const fullchainPath = join(CERTS_DIR, FQDN, `fullchain1.pem`);
+const keyPath = join(CERTS_DIR, FQDN, `privkey1.pem`);
 
 console.log({ fullchainPath, keyPath });
 setTimeout(() => {
