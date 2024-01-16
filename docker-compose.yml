@@ -3,7 +3,6 @@ version: "3"
 services:
   helloworld:
     build:
-      image: helloworld:${TAG}
       context: ./helloworld
       dockerfile: Dockerfile
     ports:
