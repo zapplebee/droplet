@@ -4,6 +4,6 @@ WORKDIR /apps/helloworld
 
 ADD ./ /apps/helloworld
 
-RUN bun install --production
+RUN bun install
 
 CMD ["bun", "index.ts"]
