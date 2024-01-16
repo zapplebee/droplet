@@ -9,12 +9,17 @@ if (!IS_PRODUCTON) {
   process.exit(1);
 }
 
+const fullchainPath = join(CERTS_DIR, FQDN, `fullchain.pem`);
+const keyPath = join(CERTS_DIR, FQDN, `privkey.pem`);
+
+console.log({ fullchainPath, keyPath });
+
 Bun.serve({
   hostname: "0.0.0.0",
   port: 443,
   tls: {
-    cert: Bun.file(join(CERTS_DIR, FQDN, `fullchain.pem`)),
-    key: Bun.file(join(CERTS_DIR, FQDN, `privkey.pem`)),
+    cert: Bun.file(fullchainPath),
+    key: Bun.file(keyPath),
   },
   fetch: mainFetchHandler,
 });
