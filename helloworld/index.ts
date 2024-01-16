@@ -2,30 +2,18 @@ import { IS_PRODUCTON, CERTS_DIR, FQDN } from "./env";
 import { join } from "node:path";
 import { mainFetchHandler } from "./main";
 
-const PRODUCTION_CONFIG = {
-  port: 443,
-  tls: {
-    cert: Bun.file(join(CERTS_DIR, FQDN, `fullchain.pem`)),
-    key: Bun.file(join(CERTS_DIR, FQDN, `privkey.pem`)),
-  },
-} as const;
-
-const DEV_CONFIG = {
-  port: 3100,
-} as const;
-
 console.log({ IS_PRODUCTON });
-const LIVE_CONFIG = IS_PRODUCTON ? PRODUCTION_CONFIG : DEV_CONFIG;
-
-console.log(LIVE_CONFIG);
-
-Bun.serve({
-  hostname: "0.0.0.0",
-  ...LIVE_CONFIG,
-  fetch: mainFetchHandler,
-});
 
 if (IS_PRODUCTON) {
+  Bun.serve({
+    hostname: "0.0.0.0",
+    port: 443,
+    tls: {
+      cert: Bun.file(join(CERTS_DIR, FQDN, `fullchain.pem`)),
+      key: Bun.file(join(CERTS_DIR, FQDN, `privkey.pem`)),
+    },
+    fetch: mainFetchHandler,
+  });
   // no need to serve the redirects if we're not in prod
   Bun.serve({
     port: 80,
@@ -34,6 +22,9 @@ if (IS_PRODUCTON) {
       return Response.redirect(`${req.url.replace(/^http:/gi, "https:")}`, 302);
     },
   });
+} else {
+  console.log("Not in production mode");
+  process.exit(1);
 }
 
 console.log("started: " + performance.now());
