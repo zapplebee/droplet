@@ -1,0 +1,20 @@
+version: "3"
+
+services:
+  helloworld:
+    build:
+      image: helloworld:${TAG}
+      context: ./helloworld
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./notes:/mdlogdir
+      - /etc/letsencrypt/live:/hostcerts
+    environment:
+      - NODE_ENV=production
+      - FDQN=zapplebee.online
+      - CERTS_DIR=/hostcerts
+      - NOTES_DIR=/mdlogdir
+    restart: always
