@@ -19,7 +19,9 @@ const LIVE_CONFIG = IS_PRODUCTON ? PRODUCTION_CONFIG : DEV_CONFIG;
 
 Bun.serve({
   hostname: "0.0.0.0",
-  fetch: mainFetchHandler,
+  fetch(req: Request) {
+    return mainFetchHandler(req);
+  },
   ...LIVE_CONFIG,
 } as any);
 
