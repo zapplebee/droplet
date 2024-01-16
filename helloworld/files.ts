@@ -1,14 +1,13 @@
 import { Glob } from "bun";
-
-export const NOTES_DIRECTORY = "../notes/";
+import { NOTES_DIR, FQDN } from "./env";
 
 export async function getFilePaths(): Promise<Array<string>> {
   const glob = new Glob("*.md");
 
   const filepaths: Array<string> = [];
 
-  for await (const file of glob.scan(NOTES_DIRECTORY)) {
-    filepaths.push(`${NOTES_DIRECTORY}${file}`);
+  for await (const file of glob.scan(NOTES_DIR)) {
+    filepaths.push(`${NOTES_DIR}${file}`);
   }
 
   return filepaths;
@@ -127,11 +126,11 @@ export async function getAsHtml(
 
   let description = "Zac's Log";
   let title = "Zac's Log";
-  let canonicalURL = "https://zapplebee.online";
-  let metaImage = "https://zapplebee.online/meta.png";
+  let canonicalURL = `https://${FQDN}`;
+  let metaImage = `https://${FQDN}/meta.png`;
 
   if (focusId && ids.has(focusId)) {
-    canonicalURL = `https://zapplebee.online/${focusId}`;
+    canonicalURL = `https://${FQDN}/${focusId}`;
     const focusDescription = focusIdMap.get(focusId) as string;
     description = focusDescription === "" ? description : focusDescription;
     scrollToScript = `<script>window['${focusId}'].scrollIntoView(true);</script>`;

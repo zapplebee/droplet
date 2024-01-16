@@ -1,18 +1,18 @@
+import { IS_PRODUCTON, CERTS_DIR, FQDN } from "./env";
+import { join } from "node:path";
 import { getAsHtml } from "./files";
 
 const PRODUCTION_CONFIG = {
   port: 443,
   tls: {
-    cert: Bun.file("/etc/letsencrypt/live/zapplebee.online/fullchain.pem"),
-    key: Bun.file("/etc/letsencrypt/live/zapplebee.online/privkey.pem"),
+    cert: Bun.file(join(CERTS_DIR, FQDN, `fullchain.pem`)),
+    key: Bun.file(join(CERTS_DIR, FQDN, `privkey.pem`)),
   },
 } as const;
 
 const DEV_CONFIG = {
   port: 3100,
 } as const;
-
-const IS_PRODUCTON = process.env.NODE_ENV === "production";
 
 const LIVE_CONFIG = IS_PRODUCTON ? PRODUCTION_CONFIG : DEV_CONFIG;
 
