@@ -1,18 +1,19 @@
-import { IS_PRODUCTON, CERTS_DIR, FQDN } from "./env";
+import "./logger";
+import { IS_PRODUCTION, CERTS_DIR, FQDN } from "./env";
 import { join } from "node:path";
 import { mainFetchHandler } from "./main";
 
-console.log({ IS_PRODUCTON });
+logger.debug("PRODUCTION_MODE", { IS_PRODUCTION });
 
-if (!IS_PRODUCTON) {
-  console.log("Do not run prod server outside production");
+if (!IS_PRODUCTION) {
+  logger.error("Do not run prod server outside production");
   process.exit(1);
 }
 
 const fullchainPath = join(CERTS_DIR, FQDN, `fullchain1.pem`);
 const keyPath = join(CERTS_DIR, FQDN, `privkey1.pem`);
 
-console.log({ fullchainPath, keyPath });
+logger.debug("CERT_PATHS", { fullchainPath, keyPath });
 setTimeout(() => {
   Bun.serve({
     hostname: "0.0.0.0",
@@ -33,4 +34,4 @@ setTimeout(() => {
   });
 }, 1000);
 
-console.log("started: " + performance.now());
+logger.info("Server Started", { timestamp: Date.now() });

@@ -1,3 +1,4 @@
+import type { Server } from "bun";
 import { getAsHtml } from "./files";
 
 const CSS_RESPONSE_BODY = Buffer.from(
@@ -6,15 +7,20 @@ const CSS_RESPONSE_BODY = Buffer.from(
 
 const IMAGE = Buffer.from(await Bun.file("./meta.png").arrayBuffer());
 
-export async function mainFetchHandler(req: Request) {
-  console.log(
-    req.method,
-    req.url,
-    req.headers.get("User-Agent") ?? "NO_USER_AGENT"
-  );
+export async function mainFetchHandler(req: Request, server: Server) {
   const requestUrl = new URL(req.url);
 
-  const acceptsGzip = req.headers.get("Content-Encoding")?.includes("gzip");
+  logger.http(`${req.method}: ${requestUrl.pathname}`, {
+    hostname: requestUrl.hostname,
+    pathname: requestUrl.pathname,
+    search: requestUrl.search,
+    userAgent: req.headers.get("User-Agent") ?? "NO_USER_AGENT",
+    timestamp: Date.now(),
+    ipAddress: server.requestIP(req),
+    method: req.method,
+  });
+
+  const acceptsGzip = req.headers.get("Accept-Encoding")?.includes("gzip");
 
   const { compress, encodingHeaders } = acceptsGzip
     ? {
