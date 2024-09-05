@@ -163,12 +163,14 @@ export async function getAsHtml(
 <!-- Mastodon -->
 <link href="https://mastodon.cloud/@zapplebee" rel="me" />
 <style>@import "/public/main.css";</style>
+<meta name="google-site-verification" content="1lxtlP6g7mlo6nm_e4aBjgIJ5MEcQgCl9J6Xmd0BqO4" />
 `;
 
   const head = `<!DOCTYPE html>
 <html lang="en">
 <head>
 ${headTags}
+
 </head>
 <body>
 <main>`;
