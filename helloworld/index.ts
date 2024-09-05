@@ -10,8 +10,8 @@ if (!IS_PRODUCTION) {
   process.exit(1);
 }
 
-const fullchainPath = join(CERTS_DIR, FQDN, `fullchain1.pem`);
-const keyPath = join(CERTS_DIR, FQDN, `privkey1.pem`);
+const fullchainPath = join(CERTS_DIR, FQDN, `fullchain2.pem`);
+const keyPath = join(CERTS_DIR, FQDN, `privkey2.pem`);
 
 logger.debug("CERT_PATHS", { fullchainPath, keyPath });
 setTimeout(() => {
