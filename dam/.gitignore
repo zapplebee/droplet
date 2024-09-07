@@ -1,2 +1,13 @@
 # deps
 node_modules/
+uploads/*.jpg
+uploads/*.webp
+uploads/*.avif
+uploads/*.png
+
+quarantine/*.jpg
+quarantine/*.webp
+quarantine/*.avif
+quarantine/*.png
+
+images.json
