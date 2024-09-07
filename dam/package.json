@@ -4,8 +4,13 @@
     "dev": "bun run --hot src/index.tsx"
   },
   "dependencies": {
-    "hono": "^4.5.11"
+    "hono": "^4.5.11",
+    "lowdb": "^7.0.1",
+    "sharp": "^0.33.5"
   },
+  "trustedDependencies": [
+    "sharp"
+  ],
   "devDependencies": {
     "@types/bun": "latest"
   }
