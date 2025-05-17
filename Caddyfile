@@ -1,0 +1,28 @@
+{
+    email zskalko@gmail.com 
+}
+
+# Main site configuration
+zapplebee.online {
+    # Enables automatic HTTPS with Let's Encrypt
+    tls {
+        protocols tls1.2 tls1.3
+    }
+    
+    reverse_proxy helloworld:3000
+    
+    log {
+        output file /var/log/caddy/access.log
+        format json
+    }
+    
+    # Handle errors gracefully
+    handle_errors {
+        respond "{http.error.status_code} {http.error.status_text}"
+    }
+}
+
+# Redirect www to non-www
+www.zapplebee.online {
+    redir https://zapplebee.online{uri} permanent
+}

@@ -5,15 +5,25 @@ services:
     build:
       context: ./helloworld
       dockerfile: Dockerfile
+    expose:
+      - "3000"
+    volumes:
+      - ./notes:/mdlogdir
+    environment:
+      - NODE_ENV=production
+      - DOMAIN=zapplebee.online
+      - NOTES_DIR=/mdlogdir
+    restart: always
+
+  caddy:
+    image: caddy:2
+    restart: always
     ports:
       - "80:80"
       - "443:443"
     volumes:
-      - ./notes:/mdlogdir
-      - /etc/letsencrypt/archive/:/hostcerts
-    environment:
-      - NODE_ENV=production
-      - FDQN=zapplebee.online
-      - CERTS_DIR=/hostcerts
-      - NOTES_DIR=/mdlogdir
-    restart: always
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      - /mnt/volume_sfo3_01/apps/.caddydata/data:/data
+      - /mnt/volume_sfo3_01/apps/.caddydata/config:/config
+    depends_on:
+      - helloworld
